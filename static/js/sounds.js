@@ -1,3 +1,4 @@
+
 class SoundManager {
     constructor() {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -5,13 +6,13 @@ class SoundManager {
         this.bgGain = null;
     }
 
-    playBackgroundMusic(type) {
+    playBackgroundMusic(musicType) {
         this.stopBackgroundMusic();
         this.bgGain = this.audioContext.createGain();
         this.bgGain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
         this.bgGain.connect(this.audioContext.destination);
 
-        switch(type) {
+        switch(musicType) {
             case 'menu':
                 // Peaceful space theme - major chord arpeggio
                 this.createMusicPattern([440, 550, 660], 0.5, 'sine');
@@ -27,7 +28,7 @@ class SoundManager {
         }
     }
 
-    createMusicPattern(frequencies, interval, type) {
+    createMusicPattern(frequencies, interval, oscillatorType) {
         let time = this.audioContext.currentTime;
 
         // Create a repeating pattern
@@ -36,7 +37,7 @@ class SoundManager {
                 const osc = this.audioContext.createOscillator();
                 const noteGain = this.audioContext.createGain();
 
-                osc.type = type;
+                osc.type = oscillatorType;
                 osc.frequency.setValueAtTime(freq, time + (i * frequencies.length + index) * interval);
 
                 noteGain.gain.setValueAtTime(0, time + (i * frequencies.length + index) * interval);
@@ -56,7 +57,7 @@ class SoundManager {
         // Schedule the next pattern
         setTimeout(() => {
             if (this.bgGain) {
-                this.playBackgroundMusic(type);
+                this.playBackgroundMusic(musicType);
             }
         }, (interval * frequencies.length * 4 * 1000));
     }
@@ -90,11 +91,11 @@ class SoundManager {
         setTimeout(() => this.createSound(1100, 0.5), 200);
     }
 
-    createSound(frequency, duration, type = 'sine') {
+    createSound(frequency, duration, soundType = 'sine') {
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
 
-        oscillator.type = type;
+        oscillator.type = soundType;
         oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
 
         gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
@@ -108,4 +109,5 @@ class SoundManager {
     }
 }
 
+// Create a global soundManager instance
 const soundManager = new SoundManager();
