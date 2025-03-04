@@ -95,10 +95,38 @@ function showMenu() {
     document.getElementById('gameCanvas').classList.add('d-none');
     document.getElementById('level1-instructions').classList.add('d-none');
     document.getElementById('level2-instructions').classList.add('d-none');
-    loadHighScores();
+    
+    // If loadHighScores function exists, call it
+    if (typeof loadHighScores === 'function') {
+        loadHighScores();
+    }
 
-    soundManager.playBackgroundMusic('menu');
+    // If soundManager exists, play menu music
+    if (typeof soundManager !== 'undefined' && soundManager) {
+        try {
+            soundManager.playBackgroundMusic('menu');
+        } catch (e) {
+            console.log("Could not play menu music:", e);
+        }
+    }
 }
+
+// Add global key listener for 'M' to return to menu
+document.addEventListener('keydown', function(event) {
+    // Check if 'M' key was pressed (keyCode 77)
+    if (event.keyCode === 77 || event.key === 'm' || event.key === 'M') {
+        // If the game is active (canvas is visible), return to menu
+        if (!document.getElementById('gameCanvas').classList.contains('d-none')) {
+            console.log("M key pressed - returning to menu");
+            showMenu();
+            
+            // If we have a current level object and it has a cleanup method, call it
+            if (currentLevel && typeof currentLevel.cleanup === 'function') {
+                currentLevel.cleanup();
+            }
+        }
+    }
+});
 
 function startLevel(levelNum) {
     document.getElementById('menu').classList.add('d-none');

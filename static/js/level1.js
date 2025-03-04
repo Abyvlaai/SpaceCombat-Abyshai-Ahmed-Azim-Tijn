@@ -53,6 +53,14 @@ class Level1 {
         if (this.keys['ArrowUp']) this.ship.y -= this.ship.speed;
         if (this.keys['ArrowDown']) this.ship.y += this.ship.speed;
 
+        //Handle 'M' key for returning to homescreen
+        if (this.keys['m'] || this.keys['M']) {
+            this.cleanup();
+            showHomeScreen(); // Assumed function to show homescreen
+            return;
+        }
+
+
         // Keep ship in bounds
         this.ship.x = Math.max(0, Math.min(this.canvas.width - this.ship.width, this.ship.x));
         this.ship.y = Math.max(0, Math.min(this.canvas.height - this.ship.height, this.ship.y));
@@ -109,9 +117,21 @@ class Level1 {
     }
 
     gameLoop() {
+        this.animationFrameId = requestAnimationFrame(() => this.gameLoop()); //Store animationFrameId
         if (!this.isActive) return;
         this.update();
         this.draw();
-        requestAnimationFrame(() => this.gameLoop());
+    }
+
+    // Method to clean up resources when leaving the level
+    cleanup() {
+        // Clear any running timers or animations
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        // Remove any event listeners if necessary
+
+        console.log("Level 1 cleanup complete");
+        this.isActive = false; // added to ensure gameloop stops
     }
 }

@@ -78,7 +78,7 @@ class Level2 {
 
     update() {
         if (!this.isActive) return;
-        
+
         // Check if max score reached
         const currentScore = this.calculateScore();
         if (currentScore >= 999999) {
@@ -156,7 +156,7 @@ class Level2 {
                 // Increase difficulty slightly with each wave
                 this.aliensDestroyed += 8; // Bonus for clearing a wave
                 this.score = this.calculateScore();
-                
+
                 // Check if max score reached after adding bonus
                 if (this.score >= 999999) {
                     this.score = 999999;
@@ -170,20 +170,20 @@ class Level2 {
             }
         }
     }
-    
+
     showMaxScoreScreen() {
         soundManager.playWin();
-        
+
         // Create a special max score message
         const maxScoreMessage = "MAXIMUM SCORE REACHED! You've achieved legendary status with 999,999 points!";
-        
+
         // Use the existing win screen with our custom message
         document.getElementById('win-message').textContent = maxScoreMessage;
         document.getElementById('score-message').textContent = "Your Score: 999,999";
         document.getElementById('score-submit').classList.remove('d-none');
         document.getElementById('win-screen').classList.remove('d-none');
         document.getElementById('gameCanvas').classList.add('d-none');
-        
+
         // Stop game music and play menu music
         soundManager.stopBackgroundMusic();
         soundManager.playBackgroundMusic('menu');
@@ -251,5 +251,14 @@ class Level2 {
         this.update();
         this.draw();
         requestAnimationFrame(() => this.gameLoop());
+    }
+
+    cleanup() {
+        // Clear any running timers or animations
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        // Remove any event listeners if necessary
+        console.log("Level 2 cleanup complete");
     }
 }
