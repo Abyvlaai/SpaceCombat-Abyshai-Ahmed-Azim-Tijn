@@ -1,8 +1,9 @@
 class Level2 {
-    constructor(canvas, context, shipImage) {
+    constructor(canvas, context, shipImage, alienImage) {
         this.canvas = canvas;
         this.ctx = context;
         this.shipImage = shipImage;
+        this.alienImage = alienImage;
         this.ship = {
             x: canvas.width / 2,
             y: canvas.height - 50,
@@ -123,7 +124,7 @@ class Level2 {
         if (this.aliens.length === 0) {
             soundManager.playWin();
             this.isActive = false;
-            showMenu();
+            showWinScreen(2);
         }
     }
 
@@ -138,8 +139,8 @@ class Level2 {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // Draw lives counter
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.font = '20px Arial';
+        this.ctx.fillStyle = '#00ff00';
+        this.ctx.font = '20px Orbitron';
         this.ctx.fillText(`Lives: ${this.lives}`, 20, 30);
 
         // Draw ship using image
@@ -151,10 +152,9 @@ class Level2 {
             this.ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
         });
 
-        // Draw aliens
-        this.ctx.fillStyle = '#ff0000';
+        // Draw aliens using alien image
         this.aliens.forEach(alien => {
-            this.ctx.fillRect(alien.x, alien.y, alien.width, alien.height);
+            this.ctx.drawImage(this.alienImage, alien.x, alien.y, alien.width, alien.height);
         });
     }
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40" height="40" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .alien-body { fill: #00ff00; }
+        .alien-eye { fill: #000000; }
+        .alien-highlight { fill: #88ff88; }
+    </style>
+    <!-- Main body -->
+    <path class="alien-body" d="M5,25 L10,15 L15,25 L20,15 L25,25 L30,15 L35,25 L35,30 L5,30 Z"/>
+    <!-- Eyes -->
+    <circle class="alien-eye" cx="15" cy="20" r="3"/>
+    <circle class="alien-eye" cx="25" cy="20" r="3"/>
+    <!-- Tentacles -->
+    <path class="alien-body" d="M10,30 L8,35 M20,30 L20,35 M30,30 L32,35"/>
+    <!-- Highlight -->
+    <path class="alien-highlight" d="M15,17 L25,17 L20,22 Z"/>
+</svg>

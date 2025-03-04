@@ -76,7 +76,7 @@ class Level1 {
         if (this.ship.y <= 50) {
             soundManager.playWin();
             this.isActive = false;
-            showMenu();
+            showWinScreen(1);
         }
     }
 

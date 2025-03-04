@@ -1,13 +1,65 @@
-#gameCanvas {
+body {
     background-color: #000;
-    border: 2px solid var(--bs-secondary);
-    border-radius: 8px;
-    max-width: 100%;
+    background-image: 
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+    background-size: 550px 550px, 350px 350px, 250px 250px;
+    background-position: 0 0, 40px 60px, 130px 270px;
+    font-family: 'Orbitron', sans-serif;
 }
 
-.card {
-    background-color: rgba(33, 37, 41, 0.9);
-    border: 1px solid var(--bs-secondary);
+.game-title {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0,255,0,0.5);
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+#gameCanvas {
+    background-color: #000;
+    border: 2px solid #00ff00;
+    border-radius: 8px;
+    max-width: 100%;
+    box-shadow: 0 0 20px rgba(0,255,0,0.3);
+}
+
+.game-card {
+    background-color: rgba(0, 20, 0, 0.9);
+    border: 1px solid #00ff00;
+    box-shadow: 0 0 15px rgba(0,255,0,0.2);
+}
+
+.game-btn {
+    border-color: #00ff00;
+    color: #00ff00;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.game-btn:hover {
+    background-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0,255,0,0.5);
+}
+
+.victory-text {
+    color: #00ff00;
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px rgba(0,255,0,0.5);
+}
+
+.win-card {
+    background-color: rgba(0, 20, 0, 0.95);
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 30px rgba(0,255,0,0.3);
+}
+
+#win-message {
+    color: #fff;
+    font-size: 1.2rem;
+    margin: 20px 0;
 }
 
 .btn:focus {
