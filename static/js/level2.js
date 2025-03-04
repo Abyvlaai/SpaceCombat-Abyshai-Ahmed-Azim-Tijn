@@ -1,7 +1,8 @@
 class Level2 {
-    constructor(canvas, context) {
+    constructor(canvas, context, shipImage) {
         this.canvas = canvas;
         this.ctx = context;
+        this.shipImage = shipImage;
         this.ship = {
             x: canvas.width / 2,
             y: canvas.height - 50,
@@ -141,9 +142,8 @@ class Level2 {
         this.ctx.font = '20px Arial';
         this.ctx.fillText(`Lives: ${this.lives}`, 20, 30);
 
-        // Draw ship
-        this.ctx.fillStyle = '#00ff00';
-        this.ctx.fillRect(this.ship.x, this.ship.y, this.ship.width, this.ship.height);
+        // Draw ship using image
+        this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);
 
         // Draw bullets
         this.ctx.fillStyle = '#ffff00';

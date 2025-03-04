@@ -1,12 +1,23 @@
-let canvas, ctx, currentLevel;
+let canvas, ctx, currentLevel, shipImage;
 
-function init() {
+function loadImages() {
+    return new Promise((resolve) => {
+        shipImage = new Image();
+        shipImage.src = '/static/images/spaceship.svg';
+        shipImage.onload = () => resolve();
+    });
+}
+
+async function init() {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
-    
+
+    // Load images before starting
+    await loadImages();
+
     // Create level instances
-    window.level1 = new Level1(canvas, ctx);
-    window.level2 = new Level2(canvas, ctx);
+    window.level1 = new Level1(canvas, ctx, shipImage);
+    window.level2 = new Level2(canvas, ctx, shipImage);
 }
 
 function showMenu() {
@@ -19,7 +30,7 @@ function showMenu() {
 function startLevel(levelNum) {
     document.getElementById('menu').classList.add('d-none');
     document.getElementById('gameCanvas').classList.remove('d-none');
-    
+
     // Show appropriate instructions
     document.getElementById('level1-instructions').classList.toggle('d-none', levelNum !== 1);
     document.getElementById('level2-instructions').classList.toggle('d-none', levelNum !== 2);
@@ -28,7 +39,7 @@ function startLevel(levelNum) {
     if (currentLevel) {
         currentLevel.isActive = false;
     }
-    
+
     currentLevel = levelNum === 1 ? window.level1 : window.level2;
     currentLevel.start();
 }

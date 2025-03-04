@@ -1,7 +1,8 @@
 class Level1 {
-    constructor(canvas, context) {
+    constructor(canvas, context, shipImage) {
         this.canvas = canvas;
         this.ctx = context;
+        this.shipImage = shipImage;
         this.ship = {
             x: canvas.width / 2,
             y: canvas.height - 50,
@@ -12,7 +13,7 @@ class Level1 {
         this.asteroids = [];
         this.isActive = false;
         this.keys = {};
-        
+
         this.bindKeys();
     }
 
@@ -86,14 +87,8 @@ class Level1 {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw ship
-        this.ctx.fillStyle = '#00ff00';
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.ship.x + this.ship.width/2, this.ship.y);
-        this.ctx.lineTo(this.ship.x, this.ship.y + this.ship.height);
-        this.ctx.lineTo(this.ship.x + this.ship.width, this.ship.y + this.ship.height);
-        this.ctx.closePath();
-        this.ctx.fill();
+        // Draw ship using image
+        this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);
 
         // Draw asteroids
         this.ctx.fillStyle = '#888888';
