@@ -67,8 +67,7 @@ async function init() {
     // Load high scores
     await loadHighScores();
 
-    // Start menu music
-    soundManager.playBackgroundMusic('menu');
+    // Menu music will be handled by menu.js
 }
 
 function showWinScreen(level, score) {
