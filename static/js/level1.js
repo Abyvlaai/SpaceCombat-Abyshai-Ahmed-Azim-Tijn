@@ -106,13 +106,59 @@ class Level1 {
         // Draw ship using image
         this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);
 
-        // Draw asteroids
-        this.ctx.fillStyle = '#888888';
+        // Draw detailed asteroids
         this.asteroids.forEach(asteroid => {
+            // Create a more detailed asteroid with craters and texture
+            const centerX = asteroid.x + asteroid.width/2;
+            const centerY = asteroid.y + asteroid.height/2;
+            const radius = asteroid.width/2;
+            
+            // Base asteroid shape - slightly irregular
             this.ctx.beginPath();
-            this.ctx.arc(asteroid.x + asteroid.width/2, asteroid.y + asteroid.height/2, 
-                        asteroid.width/2, 0, Math.PI * 2);
+            this.ctx.fillStyle = '#808080'; // Base gray color
+            
+            // Create an irregular shape with 8 points
+            const points = 8;
+            const irregularity = 0.2; // How irregular the shape is
+            
+            for (let i = 0; i < points; i++) {
+                const angle = (i / points) * Math.PI * 2;
+                const randomRadius = radius * (1 - irregularity + Math.random() * irregularity);
+                const x = centerX + Math.cos(angle) * randomRadius;
+                const y = centerY + Math.sin(angle) * randomRadius;
+                
+                if (i === 0) {
+                    this.ctx.moveTo(x, y);
+                } else {
+                    this.ctx.lineTo(x, y);
+                }
+            }
+            
+            this.ctx.closePath();
             this.ctx.fill();
+            
+            // Add craters
+            const craterCount = 3 + Math.floor(Math.random() * 3);
+            this.ctx.fillStyle = '#606060'; // Darker gray for craters
+            
+            for (let i = 0; i < craterCount; i++) {
+                const craterRadius = radius * (0.2 + Math.random() * 0.2);
+                const angle = Math.random() * Math.PI * 2;
+                const distance = radius * 0.4 * Math.random();
+                const craterX = centerX + Math.cos(angle) * distance;
+                const craterY = centerY + Math.sin(angle) * distance;
+                
+                this.ctx.beginPath();
+                this.ctx.arc(craterX, craterY, craterRadius, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+            
+            // Add highlights for 3D effect
+            this.ctx.strokeStyle = '#a0a0a0'; // Lighter gray for highlights
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.arc(centerX - radius/3, centerY - radius/3, radius * 0.6, 0, Math.PI * 0.5);
+            this.ctx.stroke();
         });
     }
 
