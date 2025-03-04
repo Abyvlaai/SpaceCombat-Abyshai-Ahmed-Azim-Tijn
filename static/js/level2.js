@@ -16,6 +16,8 @@ class Level2 {
         this.lives = 3;
         this.isActive = false;
         this.keys = {};
+        this.score = 0;
+        this.aliensDestroyed = 0;
 
         this.bindKeys();
     }
@@ -49,8 +51,14 @@ class Level2 {
         this.isActive = true;
         this.lives = 3;
         this.bullets = [];
+        this.score = 0;
+        this.aliensDestroyed = 0;
         this.setupAliens();
         this.gameLoop();
+    }
+
+    calculateScore() {
+        return (this.aliensDestroyed * 100) + (this.lives * 500);
     }
 
     shoot() {
@@ -99,6 +107,8 @@ class Level2 {
             this.aliens = this.aliens.filter(alien => {
                 if (this.checkCollision(bullet, alien)) {
                     soundManager.playExplosion();
+                    this.aliensDestroyed++;
+                    this.score = this.calculateScore();
                     return false;
                 }
                 return true;
@@ -124,7 +134,7 @@ class Level2 {
         if (this.aliens.length === 0) {
             soundManager.playWin();
             this.isActive = false;
-            showWinScreen(2);
+            showWinScreen(2, this.calculateScore());
         }
     }
 
@@ -138,10 +148,12 @@ class Level2 {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw lives counter
+        // Draw lives counter and score
         this.ctx.fillStyle = '#00ff00';
         this.ctx.font = '20px Orbitron';
         this.ctx.fillText(`Lives: ${this.lives}`, 20, 30);
+        this.ctx.fillText(`Score: ${this.score}`, 20, 60);
+        this.ctx.fillText(`Aliens Destroyed: ${this.aliensDestroyed}`, 20, 90);
 
         // Draw ship using image
         this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);

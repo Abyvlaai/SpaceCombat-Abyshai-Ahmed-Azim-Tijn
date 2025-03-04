@@ -1,4 +1,6 @@
 let canvas, ctx, currentLevel, shipImage, alienImage;
+let currentScore = 0;
+let currentLevelNum = 0;
 
 function loadImages() {
     return new Promise((resolve) => {
@@ -15,6 +17,42 @@ function loadImages() {
     });
 }
 
+async function loadHighScores() {
+    for (let level of [1, 2]) {
+        const response = await fetch(`/api/highscores/${level}`);
+        const scores = await response.json();
+        const scoreList = document.getElementById(`level${level}-scores`);
+        scoreList.innerHTML = scores.map(score => 
+            `<li class="text-success">${score.player_name}: ${score.score}</li>`
+        ).join('');
+    }
+}
+
+async function submitScore() {
+    const playerName = document.getElementById('player-name').value.trim();
+    if (!playerName) {
+        alert('Please enter your name!');
+        return;
+    }
+
+    const response = await fetch('/api/save_score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            player_name: playerName,
+            score: currentScore,
+            level: currentLevelNum
+        })
+    });
+
+    if (response.ok) {
+        document.getElementById('score-submit').classList.add('d-none');
+        loadHighScores();
+    }
+}
+
 async function init() {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
@@ -26,17 +64,25 @@ async function init() {
     window.level1 = new Level1(canvas, ctx, shipImage);
     window.level2 = new Level2(canvas, ctx, shipImage, alienImage);
 
+    // Load high scores
+    await loadHighScores();
+
     // Start menu music
     soundManager.playBackgroundMusic('menu');
 }
 
-function showWinScreen(level) {
+function showWinScreen(level, score) {
     const messages = {
         1: "You've successfully navigated through the asteroid field! Ready for the alien invasion?",
         2: "Outstanding work! You've defeated the alien invasion and saved Earth!"
     };
 
+    currentScore = score;
+    currentLevelNum = level;
+
     document.getElementById('win-message').textContent = messages[level];
+    document.getElementById('score-message').textContent = `Your Score: ${score}`;
+    document.getElementById('score-submit').classList.remove('d-none');
     document.getElementById('win-screen').classList.remove('d-none');
     document.getElementById('gameCanvas').classList.add('d-none');
 
@@ -50,6 +96,7 @@ function showMenu() {
     document.getElementById('gameCanvas').classList.add('d-none');
     document.getElementById('level1-instructions').classList.add('d-none');
     document.getElementById('level2-instructions').classList.add('d-none');
+    loadHighScores();
 
     soundManager.playBackgroundMusic('menu');
 }
