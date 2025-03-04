@@ -56,7 +56,7 @@ class Level1 {
         //Handle 'M' key for returning to homescreen
         if (this.keys['m'] || this.keys['M']) {
             this.cleanup();
-            showHomeScreen(); // Assumed function to show homescreen
+            showMenu(); // Use the correct function name
             return;
         }
 
