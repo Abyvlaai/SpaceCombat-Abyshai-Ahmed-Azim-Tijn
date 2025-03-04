@@ -113,12 +113,17 @@ function startLevel(levelNum) {
     if (currentLevel) {
         currentLevel.isActive = false;
     }
+    
+    // Completely stop the current music before starting new music
     soundManager.stopBackgroundMusic();
-
-    // Start the selected level with appropriate music
-    currentLevel = levelNum === 1 ? window.level1 : window.level2;
-    soundManager.playBackgroundMusic(`level${levelNum}`);
-    currentLevel.start();
+    
+    // Short delay to ensure previous music is fully stopped
+    setTimeout(() => {
+        // Start the selected level with appropriate music
+        currentLevel = levelNum === 1 ? window.level1 : window.level2;
+        soundManager.playBackgroundMusic(`level${levelNum}`);
+        currentLevel.start();
+    }, 50);
 }
 
 // Initialize game when the page loads
