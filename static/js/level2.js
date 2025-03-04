@@ -18,6 +18,8 @@ class Level2 {
         this.keys = {};
         this.score = 0;
         this.aliensDestroyed = 0;
+        this.alienMoveSpeed = 1; // Reduced alien movement speed
+        this.roundNumber = 1;
 
         this.bindKeys();
     }
@@ -53,12 +55,13 @@ class Level2 {
         this.bullets = [];
         this.score = 0;
         this.aliensDestroyed = 0;
+        this.roundNumber = 1;
         this.setupAliens();
         this.gameLoop();
     }
 
     calculateScore() {
-        return (this.aliensDestroyed * 100) + (this.lives * 500);
+        return this.score + (this.lives * 500);
     }
 
     shoot() {
@@ -70,6 +73,12 @@ class Level2 {
             height: 10,
             speed: 7
         });
+    }
+
+    startNewRound() {
+        this.roundNumber++;
+        this.setupAliens();
+        this.alienMoveSpeed += 0.2; // Slightly increase speed for each round
     }
 
     update() {
@@ -89,7 +98,7 @@ class Level2 {
         // Update aliens
         let needsDirectionChange = false;
         this.aliens.forEach(alien => {
-            alien.x += alien.direction * 2;
+            alien.x += alien.direction * this.alienMoveSpeed;
             if (alien.x <= 0 || alien.x >= this.canvas.width - alien.width) {
                 needsDirectionChange = true;
             }
@@ -108,7 +117,7 @@ class Level2 {
                 if (this.checkCollision(bullet, alien)) {
                     soundManager.playExplosion();
                     this.aliensDestroyed++;
-                    this.score = this.calculateScore();
+                    this.score += 100; // 100 points per alien
                     return false;
                 }
                 return true;
@@ -132,9 +141,13 @@ class Level2 {
 
         // Check win condition
         if (this.aliens.length === 0) {
-            soundManager.playWin();
-            this.isActive = false;
-            showWinScreen(2, this.calculateScore());
+            if (this.roundNumber < 3) {
+                this.startNewRound();
+            } else {
+                soundManager.playWin();
+                this.isActive = false;
+                showWinScreen(2, this.calculateScore());
+            }
         }
     }
 
@@ -148,12 +161,13 @@ class Level2 {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw lives counter and score
+        // Draw game stats
         this.ctx.fillStyle = '#00ff00';
         this.ctx.font = '20px Orbitron';
         this.ctx.fillText(`Lives: ${this.lives}`, 20, 30);
-        this.ctx.fillText(`Score: ${this.score}`, 20, 60);
+        this.ctx.fillText(`Score: ${this.calculateScore()}`, 20, 60);
         this.ctx.fillText(`Aliens Destroyed: ${this.aliensDestroyed}`, 20, 90);
+        this.ctx.fillText(`Round: ${this.roundNumber}/3`, 20, 120);
 
         // Draw ship using image
         this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);

@@ -16,6 +16,9 @@ class Level1 {
         this.safeZoneHeight = 100;
         this.startTime = 0;
         this.hits = 0;
+        this.lives = 3;
+        this.score = 0;
+        this.topReached = false;
 
         this.bindKeys();
     }
@@ -31,13 +34,20 @@ class Level1 {
         this.asteroids = [];
         this.startTime = Date.now();
         this.hits = 0;
+        this.lives = 3;
+        this.score = 0;
+        this.topReached = false;
         this.gameLoop();
     }
 
     calculateScore() {
         const timeBonus = Math.max(0, 10000 - (Date.now() - this.startTime));
         const hitPenalty = this.hits * 500;
-        return Math.max(0, timeBonus - hitPenalty);
+        let totalScore = Math.max(0, timeBonus - hitPenalty) + this.score;
+        if (this.topReached) {
+            totalScore += 1000; // Bonus for reaching the top
+        }
+        return totalScore;
     }
 
     spawnAsteroid() {
@@ -80,11 +90,20 @@ class Level1 {
                 soundManager.playExplosion();
                 this.ship.y = this.canvas.height - 50;
                 this.hits++;
+                this.lives--;
+
+                if (this.lives <= 0) {
+                    this.isActive = false;
+                    showWinScreen(1, this.calculateScore());
+                    return;
+                }
             }
         });
 
         // Check win condition
-        if (this.ship.y <= 50) {
+        if (this.ship.y <= 50 && !this.topReached) {
+            this.topReached = true;
+            this.score += 1000;
             soundManager.playWin();
             this.isActive = false;
             showWinScreen(1, this.calculateScore());
@@ -106,11 +125,12 @@ class Level1 {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw current score
+        // Draw game stats
         this.ctx.fillStyle = '#00ff00';
         this.ctx.font = '20px Orbitron';
-        this.ctx.fillText(`Score: ${this.calculateScore()}`, 20, 30);
-        this.ctx.fillText(`Hits: ${this.hits}`, 20, 60);
+        this.ctx.fillText(`Lives: ${this.lives}`, 20, 30);
+        this.ctx.fillText(`Score: ${this.calculateScore()}`, 20, 60);
+        this.ctx.fillText(`Hits: ${this.hits}`, 20, 90);
 
         // Draw ship using image
         this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);
