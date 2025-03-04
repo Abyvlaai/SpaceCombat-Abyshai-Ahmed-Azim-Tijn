@@ -3,87 +3,6 @@ class SoundManager {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.sounds = {};
         this.bgMusic = null;
-        this.currentOscillator = null;
-        this.currentGain = null;
-    }
-
-    stopCurrentSound() {
-        if (this.currentOscillator) {
-            this.currentOscillator.stop();
-            this.currentOscillator.disconnect();
-            this.currentOscillator = null;
-        }
-        if (this.currentGain) {
-            this.currentGain.disconnect();
-            this.currentGain = null;
-        }
-    }
-
-    playBackgroundMusic(type) {
-        this.stopCurrentSound();
-
-        this.currentOscillator = this.audioContext.createOscillator();
-        this.currentGain = this.audioContext.createGain();
-
-        const settings = {
-            menu: { freq: 220, gain: 0.02, type: 'sine' },
-            level1: { freq: 330, gain: 0.03, type: 'triangle' },
-            level2: { freq: 440, gain: 0.03, type: 'square' }
-        };
-
-        const { freq, gain, type } = settings[type] || settings.menu;
-
-        this.currentOscillator.type = type;
-        this.currentOscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
-        this.currentGain.gain.setValueAtTime(gain, this.audioContext.currentTime);
-
-        this.currentOscillator.connect(this.currentGain);
-        this.currentGain.connect(this.audioContext.destination);
-
-        this.currentOscillator.start();
-    }
-
-    stopBackgroundMusic() {
-        this.stopCurrentSound();
-    }
-
-    playShoot() {
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-
-        oscillator.type = 'square';
-        oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
-
-        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-
-        oscillator.start();
-        oscillator.stop(this.audioContext.currentTime + 0.1);
-    }
-
-    playExplosion() {
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-
-        oscillator.type = 'sawtooth';
-        oscillator.frequency.setValueAtTime(100, this.audioContext.currentTime);
-
-        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-
-        oscillator.start();
-        oscillator.stop(this.audioContext.currentTime + 0.3);
-    }
-
-    playWin() {
-        this.createSound(880, 0.5);
-        setTimeout(() => this.createSound(1100, 0.5), 200);
     }
 
     async createSound(frequency, duration, type = 'sine') {
@@ -101,6 +20,65 @@ class SoundManager {
 
         oscillator.start();
         oscillator.stop(this.audioContext.currentTime + duration);
+    }
+
+    playBackgroundMusic(type) {
+        if (this.bgMusic) {
+            this.bgMusic.pause();
+        }
+        this.bgMusic = new Audio();
+        this.bgMusic.loop = true;
+
+        switch(type) {
+            case 'menu':
+                // Peaceful space ambiance
+                this.createOscillatorLoop(220, 0.05, 'sine');
+                break;
+            case 'level1':
+                // Tense asteroid music
+                this.createOscillatorLoop(330, 0.08, 'sawtooth');
+                break;
+            case 'level2':
+                // Action-packed invader music
+                this.createOscillatorLoop(440, 0.1, 'square');
+                break;
+        }
+    }
+
+    createOscillatorLoop(baseFreq, volume, type) {
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(baseFreq, this.audioContext.currentTime);
+
+        gain.gain.setValueAtTime(volume, this.audioContext.currentTime);
+
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+
+        osc.start();
+        this.bgMusic = osc;
+    }
+
+    stopBackgroundMusic() {
+        if (this.bgMusic) {
+            this.bgMusic.stop();
+            this.bgMusic = null;
+        }
+    }
+
+    playShoot() {
+        this.createSound(440, 0.1, 'square');
+    }
+
+    playExplosion() {
+        this.createSound(100, 0.3, 'sawtooth');
+    }
+
+    playWin() {
+        this.createSound(880, 0.5);
+        setTimeout(() => this.createSound(1100, 0.5), 200);
     }
 }
 
