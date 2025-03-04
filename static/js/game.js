@@ -5,25 +5,14 @@ let currentLevelNum = 0;
 function loadImages() {
     return new Promise((resolve) => {
         shipImage = new Image();
-        shipImage.src = '/static/images/spaceship.png';
+        shipImage.src = '/static/images/spaceship.svg';
 
         alienImage = new Image();
         alienImage.src = '/static/images/alien.svg';
 
-        // Create a dummy resolve in case images don't load
-        const safeLoadPromise = (img) => {
-            return new Promise(r => {
-                img.onload = r;
-                img.onerror = r; // Still resolve even on error
-                
-                // Timeout as a fallback
-                setTimeout(r, 1000);
-            });
-        };
-
         Promise.all([
-            safeLoadPromise(shipImage),
-            safeLoadPromise(alienImage)
+            new Promise(r => shipImage.onload = r),
+            new Promise(r => alienImage.onload = r)
         ]).then(() => resolve());
     });
 }
