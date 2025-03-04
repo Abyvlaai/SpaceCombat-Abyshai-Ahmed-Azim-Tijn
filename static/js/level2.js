@@ -134,7 +134,7 @@ class Level2 {
                 this.lives--;
                 if (this.lives <= 0) {
                     this.isActive = false;
-                    this.showLoseScreen();
+                    showMenu();
                     return;
                 } else {
                     // Reset aliens when player still has lives
@@ -182,22 +182,6 @@ class Level2 {
         document.getElementById('score-message').textContent = "Your Score: 999,999";
         document.getElementById('score-submit').classList.remove('d-none');
         document.getElementById('win-screen').classList.remove('d-none');
-        document.getElementById('gameCanvas').classList.add('d-none');
-        
-        // Stop game music and play menu music
-        soundManager.stopBackgroundMusic();
-        soundManager.playBackgroundMusic('menu');
-    }
-    
-    showLoseScreen() {
-        // Play a defeat sound if available, otherwise use explosion
-        soundManager.playExplosion();
-        
-        // Display the final score
-        document.getElementById('lose-score-message').textContent = `Final Score: ${this.calculateScore()}`;
-        
-        // Show the lose screen and hide the game canvas
-        document.getElementById('lose-screen').classList.remove('d-none');
         document.getElementById('gameCanvas').classList.add('d-none');
         
         // Stop game music and play menu music

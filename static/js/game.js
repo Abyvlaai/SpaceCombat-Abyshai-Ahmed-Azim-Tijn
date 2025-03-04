@@ -92,7 +92,6 @@ function showWinScreen(level, score) {
 function showMenu() {
     document.getElementById('menu').classList.remove('d-none');
     document.getElementById('win-screen').classList.add('d-none');
-    document.getElementById('lose-screen').classList.add('d-none');
     document.getElementById('gameCanvas').classList.add('d-none');
     document.getElementById('level1-instructions').classList.add('d-none');
     document.getElementById('level2-instructions').classList.add('d-none');
