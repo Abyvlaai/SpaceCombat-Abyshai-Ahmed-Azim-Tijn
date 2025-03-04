@@ -8,7 +8,7 @@ class Level1 {
             y: canvas.height - 50,
             width: 30,
             height: 30,
-            speed: 5
+            speed: 3  // Reduced from 5 to 3
         };
         this.asteroids = [];
         this.isActive = false;
@@ -36,7 +36,7 @@ class Level1 {
                 y: Math.random() * (this.canvas.height - 100) + 50,
                 width: 30,
                 height: 30,
-                speed: Math.random() * 2 + 2
+                speed: Math.random() * 1 + 1  // Reduced from (2 + 2) to (1 + 1)
             });
         }
     }
