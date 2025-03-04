@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
   // Make sure the audio context is resumed (browsers require user interaction)
   function resumeAudio() {
@@ -24,4 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error("Sound manager not initialized");
     }
   }, 500); // Small delay to ensure everything is loaded
+
+    // Load high scores when page loads
+    loadHighScores();
 });
