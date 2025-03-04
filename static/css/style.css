@@ -7,6 +7,7 @@ body {
     background-size: 550px 550px, 350px 350px, 250px 250px;
     background-position: 0 0, 40px 60px, 130px 270px;
     font-family: 'Orbitron', sans-serif;
+    position: relative; /* Added to allow absolute positioning of moon and spaceship */
 }
 
 .game-title {
@@ -45,15 +46,22 @@ body {
 }
 
 .victory-text {
-    color: #00ff00;
+    color: #ffff00;
+    text-shadow: 0 0 10px #ffff00;
     font-size: 2.5rem;
-    text-shadow: 0 0 10px rgba(0,255,0,0.5);
 }
 
-.win-card {
-    background-color: rgba(0, 20, 0, 0.95);
+.defeat-text {
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000;
+    font-size: 2.5rem;
+}
+
+.win-card, .lose-card {
+    max-width: 500px;
+    background-color: rgba(0, 0, 0, 0.85);
     border: 2px solid #00ff00;
-    box-shadow: 0 0 30px rgba(0,255,0,0.3);
+    color: #00ff00;
 }
 
 #win-message {
@@ -64,4 +72,40 @@ body {
 
 .btn:focus {
     box-shadow: none;
+}
+
+.moon {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 80px;
+    height: 80px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    box-shadow: 0 0 30px 5px rgba(255, 255, 255, 0.8);
+}
+
+.moon::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 15px;
+    height: 15px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    box-shadow: 25px 10px 0 -2px #e0e0e0, 15px 35px 0 -3px #e0e0e0;
+}
+
+.deco-spaceship {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    width: 80px;
+    height: 50px;
+    background-image: url('/static/images/spaceship.svg'); /* Assumes spaceship.svg exists */
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: rotate(15deg);
+    filter: brightness(0.7);
 }

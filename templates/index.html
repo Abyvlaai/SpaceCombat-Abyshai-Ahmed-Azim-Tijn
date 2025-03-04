@@ -7,8 +7,34 @@
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='img/space_background.jpg') }}'); /* Assuming you have this image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        .moon {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 150px;
+            z-index: -1; /* Place behind other elements */
+        }
+        .spaceship {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 100px;
+            z-index: -1; /* Place behind other elements */
+        }
+    </style>
 </head>
 <body>
+    <img src="{{ url_for('static', filename='img/moon.png') }}" alt="Moon" class="moon">  <!-- Add moon image -->
+    <img src="{{ url_for('static', filename='img/spaceship.png') }}" alt="Spaceship" class="spaceship"> <!-- Add spaceship image -->
+
     <div class="container text-center py-4">
         <h1 class="game-title mb-4">Space Adventure</h1>
 
@@ -88,6 +114,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- Lose Screen -->
+        <div id="lose-screen" class="position-absolute top-50 start-50 translate-middle d-none">
+            <div class="card game-card lose-card">
+                <div class="card-body">
+                    <h2 class="defeat-text">Mission Failed!</h2>
+                    <p id="lose-message" class="mb-4">You ran out of lives!</p>
+                    <button class="btn btn-outline-danger mt-3 game-btn" onclick="showMenu()">Return to Base</button>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Game Canvas -->
         <canvas id="gameCanvas" class="d-none" width="800" height="600"></canvas>
