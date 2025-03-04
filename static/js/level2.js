@@ -18,6 +18,9 @@ class Level2 {
         this.keys = {};
         this.score = 0;
         this.aliensDestroyed = 0;
+        this._showMessage = false; // Flag for showing messages
+        this._messageText = '';   // Text for the message
+        this._messageTimeout = null; // Timeout for message
 
         this.bindKeys();
     }
@@ -118,15 +121,19 @@ class Level2 {
         // Check ship-alien collisions
         for (let alien of this.aliens) {
             if (this.checkCollision(this.ship, alien)) {
-                soundManager.playExplosion();
                 this.lives--;
                 if (this.lives <= 0) {
                     this.isActive = false;
                     showMenu();
                     return;
+                } else {
+                    // Reset aliens when player still has lives
+                    soundManager.playExplosion();
+                    this.setupAliens();
+                    this.ship.x = this.canvas.width / 2;
+                    this.showMessage(`Hit! ${this.lives} lives remaining`); // Show message
+                    return;
                 }
-                this.setupAliens();
-                break;
             }
         }
 
@@ -143,6 +150,11 @@ class Level2 {
                a.x + a.width > b.x &&
                a.y < b.y + b.height &&
                a.y + a.height > b.y;
+    }
+
+    showMessage(message) {
+        this._showMessage = true;
+        this._messageText = message;
     }
 
     draw() {
@@ -168,6 +180,26 @@ class Level2 {
         this.aliens.forEach(alien => {
             this.ctx.drawImage(this.alienImage, alien.x, alien.y, alien.width, alien.height);
         });
+
+        // Draw level message if needed
+        if (this._showMessage) {
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            this.ctx.fillRect(this.canvas.width/2 - 150, this.canvas.height/2 - 40, 300, 80);
+
+            this.ctx.fillStyle = '#ff0';
+            this.ctx.font = '24px VT323, monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(this._messageText, this.canvas.width/2, this.canvas.height/2);
+            this.ctx.textAlign = 'left';
+
+            // Reset message after a delay
+            if (!this._messageTimeout) {
+                this._messageTimeout = setTimeout(() => {
+                    this._showMessage = false;
+                    this._messageTimeout = null;
+                }, 1500);
+            }
+        }
     }
 
     gameLoop() {
