@@ -61,7 +61,8 @@ class Level2 {
     }
 
     calculateScore() {
-        return (this.aliensDestroyed * 100) + (this.lives * 500);
+        const score = (this.aliensDestroyed * 100) + (this.lives * 500);
+        return Math.min(score, 999999); // Cap score at 999,999
     }
 
     shoot() {
@@ -77,6 +78,15 @@ class Level2 {
 
     update() {
         if (!this.isActive) return;
+        
+        // Check if max score reached
+        const currentScore = this.calculateScore();
+        if (currentScore >= 999999) {
+            this.score = 999999;
+            this.isActive = false;
+            this.showMaxScoreScreen();
+            return;
+        }
 
         // Ship movement
         if (this.keys['ArrowLeft']) this.ship.x -= this.ship.speed;
@@ -146,12 +156,37 @@ class Level2 {
                 // Increase difficulty slightly with each wave
                 this.aliensDestroyed += 8; // Bonus for clearing a wave
                 this.score = this.calculateScore();
+                
+                // Check if max score reached after adding bonus
+                if (this.score >= 999999) {
+                    this.score = 999999;
+                    this.isActive = false;
+                    this.showMaxScoreScreen();
+                }
             } else {
                 soundManager.playWin();
                 this.isActive = false;
                 showWinScreen(2, this.calculateScore());
             }
         }
+    }
+    
+    showMaxScoreScreen() {
+        soundManager.playWin();
+        
+        // Create a special max score message
+        const maxScoreMessage = "MAXIMUM SCORE REACHED! You've achieved legendary status with 999,999 points!";
+        
+        // Use the existing win screen with our custom message
+        document.getElementById('win-message').textContent = maxScoreMessage;
+        document.getElementById('score-message').textContent = "Your Score: 999,999";
+        document.getElementById('score-submit').classList.remove('d-none');
+        document.getElementById('win-screen').classList.remove('d-none');
+        document.getElementById('gameCanvas').classList.add('d-none');
+        
+        // Stop game music and play menu music
+        soundManager.stopBackgroundMusic();
+        soundManager.playBackgroundMusic('menu');
     }
 
     checkCollision(a, b) {
