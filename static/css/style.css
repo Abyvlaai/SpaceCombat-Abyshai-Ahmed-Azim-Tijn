@@ -65,8 +65,3 @@ body {
 .btn:focus {
     box-shadow: none;
 }
-
-.container {
-  max-width: 800px;
-  position: relative;
-}

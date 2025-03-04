@@ -30,18 +30,6 @@ class SoundManager {
 
     createMusicPattern(frequencies, interval, oscillatorType) {
         let time = this.audioContext.currentTime;
-        let currentMusicType = ''; // Store current music type
-        
-        // Store current music type based on parameters
-        if (frequencies.length === 3) {
-            if (frequencies[0] === 440 && frequencies[1] === 550 && frequencies[2] === 660) {
-                currentMusicType = 'menu';
-            } else if (frequencies[0] === 330 && frequencies[1] === 392 && frequencies[2] === 494) {
-                currentMusicType = 'level1';
-            } else if (frequencies[0] === 440 && frequencies[1] === 523 && frequencies[2] === 659) {
-                currentMusicType = 'level2';
-            }
-        }
 
         // Create a repeating pattern
         for (let i = 0; i < 4; i++) {
@@ -66,22 +54,12 @@ class SoundManager {
             });
         }
 
-        // Schedule the next pattern to create infinite loop
-        const loopDuration = interval * frequencies.length * 4 * 1000;
-        
-        // Schedule the next pattern with the same music type
+        // Schedule the next pattern
         setTimeout(() => {
             if (this.bgGain) {
-                // Only loop if the current music is still active
-                if (currentMusicType === 'menu') {
-                    this.createMusicPattern([440, 550, 660], 0.5, 'sine');
-                } else if (currentMusicType === 'level1') {
-                    this.createMusicPattern([330, 392, 494], 1, 'triangle');
-                } else if (currentMusicType === 'level2') {
-                    this.createMusicPattern([440, 523, 659], 0.25, 'square');
-                }
+                this.playBackgroundMusic(musicType);
             }
-        }, loopDuration - 100); // Slightly shorter to avoid gaps between loops
+        }, (interval * frequencies.length * 4 * 1000));
     }
 
     stopBackgroundMusic() {
@@ -89,18 +67,14 @@ class SoundManager {
             this.bgGain.disconnect();
             this.bgGain = null;
         }
-        
-        if (this.bgMusic && this.bgMusic.length > 0) {
-            this.bgMusic.forEach(osc => {
-                try {
-                    osc.stop();
-                    osc.disconnect();
-                } catch (e) {
-                    // Oscillator might have already stopped
-                }
-            });
-        }
-        
+        this.bgMusic.forEach(osc => {
+            try {
+                osc.stop();
+                osc.disconnect();
+            } catch (e) {
+                // Oscillator might have already stopped
+            }
+        });
         this.bgMusic = [];
     }
 
