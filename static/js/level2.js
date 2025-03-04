@@ -137,11 +137,20 @@ class Level2 {
             }
         }
 
-        // Check win condition
+        // Check win condition - if all aliens destroyed
         if (this.aliens.length === 0) {
-            soundManager.playWin();
-            this.isActive = false;
-            showWinScreen(2, this.calculateScore());
+            // Reset aliens and continue if player still has lives
+            if (this.lives > 0) {
+                this.setupAliens();
+                this.showMessage("Level cleared! Next wave incoming!");
+                // Increase difficulty slightly with each wave
+                this.aliensDestroyed += 8; // Bonus for clearing a wave
+                this.score = this.calculateScore();
+            } else {
+                soundManager.playWin();
+                this.isActive = false;
+                showWinScreen(2, this.calculateScore());
+            }
         }
     }
 
