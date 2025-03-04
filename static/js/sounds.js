@@ -1,50 +1,80 @@
 class SoundManager {
     constructor() {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        this.bgMusic = null;
+        this.bgMusic = [];
         this.bgGain = null;
     }
 
     playBackgroundMusic(type) {
-        if (this.bgMusic) {
-            this.bgMusic.stop();
-            this.bgGain.disconnect();
-        }
-
-        this.bgMusic = this.audioContext.createOscillator();
+        this.stopBackgroundMusic();
         this.bgGain = this.audioContext.createGain();
+        this.bgGain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        this.bgGain.connect(this.audioContext.destination);
 
-        // Set different patterns for different screens
         switch(type) {
             case 'menu':
-                this.bgMusic.type = 'sine';
-                this.bgMusic.frequency.setValueAtTime(220, this.audioContext.currentTime);
-                this.bgGain.gain.setValueAtTime(0.03, this.audioContext.currentTime);
+                // Peaceful space theme - major chord arpeggio
+                this.createMusicPattern([440, 550, 660], 0.5, 'sine');
                 break;
             case 'level1':
-                this.bgMusic.type = 'sawtooth';
-                this.bgMusic.frequency.setValueAtTime(165, this.audioContext.currentTime);
-                this.bgGain.gain.setValueAtTime(0.02, this.audioContext.currentTime);
+                // Tense asteroid music - minor chord pattern
+                this.createMusicPattern([330, 392, 494], 1, 'triangle');
                 break;
             case 'level2':
-                this.bgMusic.type = 'square';
-                this.bgMusic.frequency.setValueAtTime(196, this.audioContext.currentTime);
-                this.bgGain.gain.setValueAtTime(0.02, this.audioContext.currentTime);
+                // Action-packed invader music - faster rhythm
+                this.createMusicPattern([440, 523, 659], 0.25, 'square');
                 break;
         }
+    }
 
-        this.bgMusic.connect(this.bgGain);
-        this.bgGain.connect(this.audioContext.destination);
-        this.bgMusic.start();
+    createMusicPattern(frequencies, interval, type) {
+        let time = this.audioContext.currentTime;
+
+        // Create a repeating pattern
+        for (let i = 0; i < 4; i++) {
+            frequencies.forEach((freq, index) => {
+                const osc = this.audioContext.createOscillator();
+                const noteGain = this.audioContext.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, time + (i * frequencies.length + index) * interval);
+
+                noteGain.gain.setValueAtTime(0, time + (i * frequencies.length + index) * interval);
+                noteGain.gain.linearRampToValueAtTime(0.1, time + (i * frequencies.length + index) * interval + 0.1);
+                noteGain.gain.linearRampToValueAtTime(0, time + (i * frequencies.length + index) * interval + interval);
+
+                osc.connect(noteGain);
+                noteGain.connect(this.bgGain);
+
+                osc.start(time + (i * frequencies.length + index) * interval);
+                osc.stop(time + (i * frequencies.length + index) * interval + interval + 0.1);
+
+                this.bgMusic.push(osc);
+            });
+        }
+
+        // Schedule the next pattern
+        setTimeout(() => {
+            if (this.bgGain) {
+                this.playBackgroundMusic(type);
+            }
+        }, (interval * frequencies.length * 4 * 1000));
     }
 
     stopBackgroundMusic() {
-        if (this.bgMusic) {
-            this.bgMusic.stop();
+        if (this.bgGain) {
             this.bgGain.disconnect();
-            this.bgMusic = null;
             this.bgGain = null;
         }
+        this.bgMusic.forEach(osc => {
+            try {
+                osc.stop();
+                osc.disconnect();
+            } catch (e) {
+                // Oscillator might have already stopped
+            }
+        });
+        this.bgMusic = [];
     }
 
     playShoot() {
@@ -60,7 +90,7 @@ class SoundManager {
         setTimeout(() => this.createSound(1100, 0.5), 200);
     }
 
-    async createSound(frequency, duration, type = 'sine') {
+    createSound(frequency, duration, type = 'sine') {
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
 
