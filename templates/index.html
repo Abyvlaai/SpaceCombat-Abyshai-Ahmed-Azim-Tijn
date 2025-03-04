@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Game</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container text-center py-4">
+        <h1 class="mb-4">Space Adventure</h1>
+        
+        <!-- Game Menu -->
+        <div id="menu" class="mb-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Select Level</h5>
+                            <button class="btn btn-secondary m-2" onclick="startLevel(1)">Level 1: Asteroid Dodge</button>
+                            <button class="btn btn-secondary m-2" onclick="startLevel(2)">Level 2: Space Invaders</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Instructions -->
+        <div id="instructions" class="mb-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Instructions</h5>
+                            <p id="level1-instructions" class="d-none">
+                                Level 1: Navigate your spaceship to the top while avoiding asteroids.<br>
+                                Use arrow keys to move. Hitting an asteroid sends you back to start!
+                            </p>
+                            <p id="level2-instructions" class="d-none">
+                                Level 2: Destroy all aliens to win!<br>
+                                Use left/right arrows to move and spacebar to shoot.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas" class="d-none" width="800" height="600"></canvas>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/sounds.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/level1.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/level2.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

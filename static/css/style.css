@@ -1,0 +1,15 @@
+#gameCanvas {
+    background-color: #000;
+    border: 2px solid var(--bs-secondary);
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+.card {
+    background-color: rgba(33, 37, 41, 0.9);
+    border: 1px solid var(--bs-secondary);
+}
+
+.btn:focus {
+    box-shadow: none;
+}
