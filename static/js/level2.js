@@ -11,11 +11,11 @@ class Level2 {
         };
         this.bullets = [];
         this.aliens = [];
+        this.lives = 3;
         this.isActive = false;
         this.keys = {};
-        
+
         this.bindKeys();
-        this.setupAliens();
     }
 
     bindKeys() {
@@ -29,6 +29,7 @@ class Level2 {
     }
 
     setupAliens() {
+        this.aliens = [];
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 8; j++) {
                 this.aliens.push({
@@ -44,8 +45,8 @@ class Level2 {
 
     start() {
         this.isActive = true;
+        this.lives = 3;
         this.bullets = [];
-        this.aliens = [];
         this.setupAliens();
         this.gameLoop();
     }
@@ -91,7 +92,7 @@ class Level2 {
             });
         }
 
-        // Check collisions
+        // Check bullet-alien collisions
         this.bullets.forEach(bullet => {
             this.aliens = this.aliens.filter(alien => {
                 if (this.checkCollision(bullet, alien)) {
@@ -101,6 +102,21 @@ class Level2 {
                 return true;
             });
         });
+
+        // Check ship-alien collisions
+        for (let alien of this.aliens) {
+            if (this.checkCollision(this.ship, alien)) {
+                soundManager.playExplosion();
+                this.lives--;
+                if (this.lives <= 0) {
+                    this.isActive = false;
+                    showMenu();
+                    return;
+                }
+                this.setupAliens();
+                break;
+            }
+        }
 
         // Check win condition
         if (this.aliens.length === 0) {
@@ -119,6 +135,11 @@ class Level2 {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Draw lives counter
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.font = '20px Arial';
+        this.ctx.fillText(`Lives: ${this.lives}`, 20, 30);
 
         // Draw ship
         this.ctx.fillStyle = '#00ff00';
