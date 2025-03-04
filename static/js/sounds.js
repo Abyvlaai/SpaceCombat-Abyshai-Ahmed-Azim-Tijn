@@ -1,8 +1,63 @@
 class SoundManager {
     constructor() {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        this.sounds = {};
         this.bgMusic = null;
+        this.bgGain = null;
+    }
+
+    playBackgroundMusic(type) {
+        if (this.bgMusic) {
+            this.bgMusic.stop();
+            this.bgGain.disconnect();
+        }
+
+        this.bgMusic = this.audioContext.createOscillator();
+        this.bgGain = this.audioContext.createGain();
+
+        // Set different patterns for different screens
+        switch(type) {
+            case 'menu':
+                this.bgMusic.type = 'sine';
+                this.bgMusic.frequency.setValueAtTime(220, this.audioContext.currentTime);
+                this.bgGain.gain.setValueAtTime(0.03, this.audioContext.currentTime);
+                break;
+            case 'level1':
+                this.bgMusic.type = 'sawtooth';
+                this.bgMusic.frequency.setValueAtTime(165, this.audioContext.currentTime);
+                this.bgGain.gain.setValueAtTime(0.02, this.audioContext.currentTime);
+                break;
+            case 'level2':
+                this.bgMusic.type = 'square';
+                this.bgMusic.frequency.setValueAtTime(196, this.audioContext.currentTime);
+                this.bgGain.gain.setValueAtTime(0.02, this.audioContext.currentTime);
+                break;
+        }
+
+        this.bgMusic.connect(this.bgGain);
+        this.bgGain.connect(this.audioContext.destination);
+        this.bgMusic.start();
+    }
+
+    stopBackgroundMusic() {
+        if (this.bgMusic) {
+            this.bgMusic.stop();
+            this.bgGain.disconnect();
+            this.bgMusic = null;
+            this.bgGain = null;
+        }
+    }
+
+    playShoot() {
+        this.createSound(440, 0.1, 'square');
+    }
+
+    playExplosion() {
+        this.createSound(100, 0.3, 'sawtooth');
+    }
+
+    playWin() {
+        this.createSound(880, 0.5);
+        setTimeout(() => this.createSound(1100, 0.5), 200);
     }
 
     async createSound(frequency, duration, type = 'sine') {
@@ -20,65 +75,6 @@ class SoundManager {
 
         oscillator.start();
         oscillator.stop(this.audioContext.currentTime + duration);
-    }
-
-    playBackgroundMusic(type) {
-        if (this.bgMusic) {
-            this.bgMusic.pause();
-        }
-        this.bgMusic = new Audio();
-        this.bgMusic.loop = true;
-
-        switch(type) {
-            case 'menu':
-                // Peaceful space ambiance
-                this.createOscillatorLoop(220, 0.05, 'sine');
-                break;
-            case 'level1':
-                // Tense asteroid music
-                this.createOscillatorLoop(330, 0.08, 'sawtooth');
-                break;
-            case 'level2':
-                // Action-packed invader music
-                this.createOscillatorLoop(440, 0.1, 'square');
-                break;
-        }
-    }
-
-    createOscillatorLoop(baseFreq, volume, type) {
-        const osc = this.audioContext.createOscillator();
-        const gain = this.audioContext.createGain();
-
-        osc.type = type;
-        osc.frequency.setValueAtTime(baseFreq, this.audioContext.currentTime);
-
-        gain.gain.setValueAtTime(volume, this.audioContext.currentTime);
-
-        osc.connect(gain);
-        gain.connect(this.audioContext.destination);
-
-        osc.start();
-        this.bgMusic = osc;
-    }
-
-    stopBackgroundMusic() {
-        if (this.bgMusic) {
-            this.bgMusic.stop();
-            this.bgMusic = null;
-        }
-    }
-
-    playShoot() {
-        this.createSound(440, 0.1, 'square');
-    }
-
-    playExplosion() {
-        this.createSound(100, 0.3, 'sawtooth');
-    }
-
-    playWin() {
-        this.createSound(880, 0.5);
-        setTimeout(() => this.createSound(1100, 0.5), 200);
     }
 }
 

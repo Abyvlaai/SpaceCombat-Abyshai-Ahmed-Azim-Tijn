@@ -14,8 +14,6 @@ class Level1 {
         this.isActive = false;
         this.keys = {};
         this.safeZoneHeight = 100;
-        this.startTime = 0;
-        this.hits = 0;
 
         this.bindKeys();
     }
@@ -29,15 +27,7 @@ class Level1 {
         this.isActive = true;
         this.ship.y = this.canvas.height - 50;
         this.asteroids = [];
-        this.startTime = Date.now();
-        this.hits = 0;
         this.gameLoop();
-    }
-
-    calculateScore() {
-        const timeBonus = Math.max(0, 10000 - (Date.now() - this.startTime));
-        const hitPenalty = this.hits * 500;
-        return Math.max(0, timeBonus - hitPenalty);
     }
 
     spawnAsteroid() {
@@ -79,7 +69,6 @@ class Level1 {
             if (this.checkCollision(this.ship, asteroid)) {
                 soundManager.playExplosion();
                 this.ship.y = this.canvas.height - 50;
-                this.hits++;
             }
         });
 
@@ -87,7 +76,7 @@ class Level1 {
         if (this.ship.y <= 50) {
             soundManager.playWin();
             this.isActive = false;
-            showWinScreen(1, this.calculateScore());
+            showWinScreen(1);
         }
     }
 
@@ -105,12 +94,6 @@ class Level1 {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Draw current score
-        this.ctx.fillStyle = '#00ff00';
-        this.ctx.font = '20px Orbitron';
-        this.ctx.fillText(`Score: ${this.calculateScore()}`, 20, 30);
-        this.ctx.fillText(`Hits: ${this.hits}`, 20, 60);
 
         // Draw ship using image
         this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);
