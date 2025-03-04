@@ -13,6 +13,7 @@ class Level1 {
         this.asteroids = [];
         this.isActive = false;
         this.keys = {};
+        this.safeZoneHeight = 100; // Height of the safe zone at the bottom
 
         this.bindKeys();
     }
@@ -31,9 +32,11 @@ class Level1 {
 
     spawnAsteroid() {
         if (Math.random() < 0.02) {
+            const minY = 50;
+            const maxY = this.canvas.height - this.safeZoneHeight - 30; // Keep asteroids away from safe zone
             this.asteroids.push({
                 x: -30,
-                y: Math.random() * (this.canvas.height - 100) + 50,
+                y: Math.random() * (maxY - minY) + minY,
                 width: 30,
                 height: 30,
                 speed: Math.random() * 1 + 1  // Reduced from (2 + 2) to (1 + 1)
@@ -78,6 +81,11 @@ class Level1 {
     }
 
     checkCollision(a, b) {
+        // If ship is in safe zone at the bottom, ignore collisions
+        if (a === this.ship && a.y >= this.canvas.height - this.safeZoneHeight) {
+            return false;
+        }
+
         return a.x < b.x + b.width &&
                a.x + a.width > b.x &&
                a.y < b.y + b.height &&
