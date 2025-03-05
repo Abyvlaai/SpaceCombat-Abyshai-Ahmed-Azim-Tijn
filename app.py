@@ -1,4 +1,4 @@
-import os
+import os # Importeert de os-module voor variabelen, flask en de functies
 from flask import Flask, render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -27,7 +27,7 @@ def index():
 @app.route('/api/highscores/<int:level>')
 def get_highscores(level):
     scores = HighScore.query.filter_by(level=level).order_by(HighScore.score.desc()).limit(5).all()
-    return jsonify([{
+    return jsonify([{ # Retourneert de hoogste scores als een JSON-object
         'player_name': score.player_name,
         'score': score.score,
         'level': score.level
@@ -41,7 +41,7 @@ def save_score():
         score=data['score'],
         level=data['level']
     )
-    db.session.add(new_score)
+    db.session.add(new_score) # Adds the new score to the database session
     db.session.commit()
     return jsonify({'success': True})
 
