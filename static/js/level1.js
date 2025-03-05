@@ -1,5 +1,5 @@
-class Level1 {
-    constructor(canvas, context, shipImage) {
+class Level1 { //klasse voor level 1 
+    constructor(canvas, context, shipImage) { // constructor voor level 1
         this.canvas = canvas;
         this.ctx = context;
         this.shipImage = shipImage;
@@ -18,7 +18,7 @@ class Level1 {
         this.bindKeys();
     }
 
-    bindKeys() {
+    bindKeys() { //bind de keys voor de ship
         window.addEventListener('keydown', (e) => this.keys[e.key] = true);
         window.addEventListener('keyup', (e) => this.keys[e.key] = false);
     }
@@ -30,7 +30,7 @@ class Level1 {
         this.gameLoop();
     }
 
-    spawnAsteroid() {
+    spawnAsteroid() { //spawnt een meteeor willekeurig
         if (Math.random() < 0.02) {
             const minY = 50;
             const maxY = this.canvas.height - this.safeZoneHeight - 30;
@@ -47,32 +47,32 @@ class Level1 {
     update() {
         if (!this.isActive) return;
 
-        // Ship movement
+        // Ship beweging
         if (this.keys['ArrowLeft']) this.ship.x -= this.ship.speed;
         if (this.keys['ArrowRight']) this.ship.x += this.ship.speed;
         if (this.keys['ArrowUp']) this.ship.y -= this.ship.speed;
         if (this.keys['ArrowDown']) this.ship.y += this.ship.speed;
 
-        //Handle 'M' key for returning to homescreen
+        //Handle 'M' key for terug naar homescreen
         if (this.keys['m'] || this.keys['M']) {
             this.cleanup();
-            showMenu(); // Use the correct function name
+            showMenu(); // 
             return;
         }
 
 
-        // Keep ship in bounds
+        // Houd ship binnen canvas
         this.ship.x = Math.max(0, Math.min(this.canvas.width - this.ship.width, this.ship.x));
         this.ship.y = Math.max(0, Math.min(this.canvas.height - this.ship.height, this.ship.y));
 
-        // Spawn and update asteroids
+        // Spawn and update asteroiden
         this.spawnAsteroid();
         this.asteroids.forEach(asteroid => {
             asteroid.x += asteroid.speed;
         });
         this.asteroids = this.asteroids.filter(asteroid => asteroid.x < this.canvas.width);
 
-        // Check collisions
+        // Checkt voor botsingen
         this.asteroids.forEach(asteroid => {
             if (this.checkCollision(this.ship, asteroid)) {
                 soundManager.playExplosion();
@@ -80,7 +80,7 @@ class Level1 {
             }
         });
 
-        // Check win condition
+        // Checkt win conditie
         if (this.ship.y <= 50) {
             soundManager.playWin();
             this.isActive = false;
@@ -89,7 +89,7 @@ class Level1 {
     }
 
     checkCollision(a, b) {
-        // If ship is in safe zone at the bottom, ignore collisions
+        // Als het schip zich in de veilige zone op de bodem bevindt, negeer dan botsingen
         if (a === this.ship && a.y >= this.canvas.height - this.safeZoneHeight) {
             return false;
         }
@@ -103,23 +103,23 @@ class Level1 {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw ship using image
+        // Teken schip mbv afbeeldingen
         this.ctx.drawImage(this.shipImage, this.ship.x, this.ship.y, this.ship.width, this.ship.height);
 
-        // Draw detailed asteroids
+        // teken details op de asteroids
         this.asteroids.forEach(asteroid => {
             // Create a more detailed asteroid with craters and texture
             const centerX = asteroid.x + asteroid.width/2;
             const centerY = asteroid.y + asteroid.height/2;
             const radius = asteroid.width/2;
             
-            // Base asteroid shape - slightly irregular
+            // basis asteroid vorm - beetje irregulair
             this.ctx.beginPath();
-            this.ctx.fillStyle = '#808080'; // Base gray color
+            this.ctx.fillStyle = '#808080'; // basis greize kleur
             
-            // Create an irregular shape with 8 points
+            // maak irregulaire vorm van astroide
             const points = 8;
-            const irregularity = 0.2; // How irregular the shape is
+            const irregularity = 0.2; // Hoe irregular de vorm is
             
             for (let i = 0; i < points; i++) {
                 const angle = (i / points) * Math.PI * 2;
@@ -137,9 +137,9 @@ class Level1 {
             this.ctx.closePath();
             this.ctx.fill();
             
-            // Add craters
+            // voegt kraters toe 
             const craterCount = 3 + Math.floor(Math.random() * 3);
-            this.ctx.fillStyle = '#606060'; // Darker gray for craters
+            this.ctx.fillStyle = '#606060'; // Donkerder grijs voor kraters
             
             for (let i = 0; i < craterCount; i++) {
                 const craterRadius = radius * (0.2 + Math.random() * 0.2);
@@ -153,8 +153,8 @@ class Level1 {
                 this.ctx.fill();
             }
             
-            // Add highlights for 3D effect
-            this.ctx.strokeStyle = '#a0a0a0'; // Lighter gray for highlights
+            //  highlights voor  3D effect
+            this.ctx.strokeStyle = '#a0a0a0'; // Lighter grijs highlights
             this.ctx.lineWidth = 1;
             this.ctx.beginPath();
             this.ctx.arc(centerX - radius/3, centerY - radius/3, radius * 0.6, 0, Math.PI * 0.5);
@@ -163,21 +163,21 @@ class Level1 {
     }
 
     gameLoop() {
-        this.animationFrameId = requestAnimationFrame(() => this.gameLoop()); //Store animationFrameId
+        this.animationFrameId = requestAnimationFrame(() => this.gameLoop()); //sla op animationFrameId
         if (!this.isActive) return;
         this.update();
         this.draw();
     }
 
-    // Method to clean up resources when leaving the level
+    // methode om resources op te schonen wanneer je van level af gaat
     cleanup() {
-        // Clear any running timers or animations
+        // schoon op alle timers of animations
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
         }
-        // Remove any event listeners if necessary
+        // verwijder elk event listeners als nodig
 
         console.log("Level 1 cleanup complete");
-        this.isActive = false; // added to ensure gameloop stops
+        this.isActive = false; // zodat gameloop stopt
     }
 }

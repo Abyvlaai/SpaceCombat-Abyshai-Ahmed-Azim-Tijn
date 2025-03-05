@@ -1,56 +1,60 @@
-class Level2 {
-    constructor(canvas, context, shipImage, alienImage) {
+class Level2 { // Constructor voor de Level 2-klasse
+    constructor(canvas, context, shipImage, alienImage) { 
+        // Wijs canvas, context en afbeeldingen toe
         this.canvas = canvas;
         this.ctx = context;
         this.shipImage = shipImage;
         this.alienImage = alienImage;
-        this.ship = {
-            x: canvas.width / 2,
-            y: canvas.height - 50,
+        this.ship = { // Initialiseer scheepseigenschappen
+            x: canvas.width / 2, // Begin horizontaal in het midden
+            y: canvas.height - 50, //bodem van canvas
             width: 40,
             height: 30,
             speed: 5
         };
+        //arrau voor kogels en aliens
         this.bullets = [];
         this.aliens = [];
-        this.lives = 3;
-        this.isActive = false;
-        this.keys = {};
-        this.score = 0;
-        this.aliensDestroyed = 0;
-        this._showMessage = false; // Flag for showing messages
-        this._messageText = '';   // Text for the message
-        this._messageTimeout = null; // Timeout for message
+        //game state variabelen
+        this.lives = 3; //speler begint met 3 levens
+        this.isActive = false; 
+        this.keys = {};//dictionary om ingedrukte toetsen bij te houden
+        this.score = 0; // begin score is 0
+        this.aliensDestroyed = 0; // aantal gedoodde aliens
+        //bericht hendeling
+        this._showMessage = false; // vlag voor berichten laten zien
+        this._messageText = '';   // Text for bericht
+        this._messageTimeout = null; // Timeout voor bericht
 
-        this.bindKeys();
+        this.bindKeys(); //bind toetsenbord event listeners
     }
 
-    bindKeys() {
-        window.addEventListener('keydown', (e) => {
+    bindKeys() { // Bind toetsenbordgebeurtenissen voor beweging en schieten
+        window.addEventListener('keydown', (e) => { // Werk het toetsenwoordenboek bij met ingedrukte toetsen
             this.keys[e.key] = true;
-            if (e.code === 'Space' && this.isActive) {
+            if (e.code === 'Space' && this.isActive) { // Schiet als de spatiebalk is ingedrukt en het spel actief is
                 this.shoot();
             }
-        });
+        }); // Verwijder de sleutel uit het woordenboek wanneer de sleutel wordt losgelaten
         window.addEventListener('keyup', (e) => this.keys[e.key] = false);
     }
 
-    setupAliens() {
+    setupAliens() { //setup van begin alien formatie
         this.aliens = [];
         for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 8; j++) {
+            for (let j = 0; j < 8; j++) { //maakt 4x8 canvases voor aliens
                 this.aliens.push({
-                    x: j * 60 + 100,
+                    x: j * 60 + 100, //horizontale en verticale positie
                     y: i * 60 + 50,
                     width: 40,
                     height: 40,
-                    direction: 1
+                    direction: 1  //begin bewegins richting
                 });
             }
         }
     }
-
-    start() {
+    //start game
+    start() { 
         this.isActive = true;
         this.lives = 3;
         this.bullets = [];
@@ -60,15 +64,15 @@ class Level2 {
         this.gameLoop();
     }
 
-    calculateScore() {
+    calculateScore() { //berekent speler score gebaseerd op vernietigde aliens en overgebleven levens
         const score = (this.aliensDestroyed * 100) + (this.lives * 500);
         return Math.min(score, 999999); // Cap score at 999,999
     }
 
-    shoot() {
-        soundManager.playShoot();
+    shoot() { //functie om te schieten
+        soundManager.playShoot(); //speelt schietgeluid
         this.bullets.push({
-            x: this.ship.x + this.ship.width/2 - 2,
+            x: this.ship.x + this.ship.width/2 - 2,//positioneer kogel voor schip
             y: this.ship.y,
             width: 4,
             height: 10,
@@ -147,7 +151,7 @@ class Level2 {
             }
         }
 
-        // Check win condition - if all aliens destroyed
+        // Check win condition - of alle aliens vernietigd
         if (this.aliens.length === 0) {
             // Reset aliens and continue if player still has lives
             if (this.lives > 0) {
@@ -246,7 +250,7 @@ class Level2 {
         }
     }
 
-    gameLoop() {
+    gameLoop() { //maakt een loop die de game update en draw functies uitvoert
         if (!this.isActive) return;
         this.update();
         this.draw();

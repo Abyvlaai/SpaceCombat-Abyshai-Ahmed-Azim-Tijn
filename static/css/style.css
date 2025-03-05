@@ -41,7 +41,7 @@ body {
     animation: hover 4s infinite ease-in-out;
 }
 
-@keyframes glow {
+@keyframes glow { /* gloei voor de sterrem*/
     from {
         filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
     }
